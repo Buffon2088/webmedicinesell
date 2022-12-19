@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.DrugDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="drugResultMap" type="webmedicinesell.pojo.DrugInfo">
+        <id column="drug_id" property="drugId" />
+        <result column="drug_name" property="drugName"/>
+        <result column="drug_introduce" property="drugIntroduce"/>
+        <result column="drug_num" property="drugNum"/>
+        <result column="drug_price" property="drugPrice"/>
+        <result column="drug_state" property="drugState"/>
+        <association column="company_id" property="companyInfo" jdbcType="INTEGER"
+                     javaType="webmedicinesell.pojo.CompanyInfo">
+            <id column="company_id" property="companyId"/>
+            <result column="company_name" property="companyName"/>
+            <result column="company_introduce" property="companyIntroduce"/>
+        </association>
+
+        <association column="drugType_id" property="drugTypeInfo" jdbcType="INTEGER"
+                     javaType="webmedicinesell.pojo.DrugTypeInfo">
+            <id column="drugType_id" property="drugTypeId"/>
+            <result column="drugType_name" property="drugTypeName"/>
+            <result column="drugType_state" property="drugTypeState"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="drugResultMap" resultType="java.util.ArrayList">
+        select * from drug_info d
+                          left join drugtype_info dy on d.drugType_id=dy.drugType_id
+                          left join company_info c on d.company_id=c.company_id
+    </select>
+
+    <select id="findDrug" resultMap="drugResultMap">
+        select * from drug_info d
+                          left join drugtype_info dy on d.drugType_id=dy.drugType_id
+                          left join company_info c on d.company_id=c.company_id
+        <where>
+            <if test="drugId!=0">drug_id=#{drugId}</if>
+            <if test="companyInfo!=null">and company_id=#{companyInfo.companyId}</if>
+            <if test="drugTypeInfo!=null">and drugType_id=#{drugTypeInfo.drugTypeId}</if>
+            <if test="drugState!=null">and drug_state=#{drugState}</if>
+        </where>
+    </select>
+
+    <delete id="deleteDrug">
+        delete from drug_info where drug_id=#{drugId}
+    </delete>
+
+    <insert id="addDrug">
+        insert into drug_info
+        values (null,#{drugName},#{drugIntroduce},#{drugNum},#{drugPrice},#{drugState},#{companyInfo.companyId},#{drugTypeInfo.drugTypeId})
+    </insert>
+
+    <update id="updateDrug">
+        update drug_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="drugName!=null">drug_num=#{drugName},</if>
+            <if test="drugIntroduce!=null">drug_introduce=#{drugIntroduce},</if>
+            <if test="drugNum!=0">drug_num=#{drugNum},</if>
+            <if test="drugPrice!=0">drug_price=#{drugPrice},</if>
+            <if test="drugState!=null">drug_state=#{drugState},</if>
+            <if test="companyInfo!=null">company_id=#{companyInfo.companyId},</if>
+            <if test="drugTypeInfo!=null">drugType_id=#{drugTypeInfo.drugTypeId}</if>
+        </trim>
+        where drug_id=#{drugId}
+    </update>
+</mapper>

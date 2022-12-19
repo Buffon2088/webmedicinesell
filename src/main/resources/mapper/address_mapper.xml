@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.AddressDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="addressResultMap" type="webmedicinesell.pojo.AddressInfo">
+        <id column="address_id" property="addressId"/>
+        <result column="address_name" property="addressName"/>
+        <result column="address_state" property="addressState"/>
+
+        <association column="user_id" property="userInfo" jdbcType="INTEGER" javaType="webmedicinesell.pojo.UserInfo">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="user_loginName" property="userLoginName"/>
+            <result column="user_loginPwd" property="userLoginPwd"/>
+            <result column="user_balance" property="userBalance"/>
+            <result column="user_email" property="userEmail"/>
+            <result column="user_key" property="userKey"/>
+            <result column="user_tel" property="userTel"/>
+            <result column="user_img" property="userImg"/>
+            <result column="user_state" property="userState"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="addressResultMap" resultType="java.util.ArrayList">
+        select * from address_info a left join user_info u on a.user_id=u.user_id
+    </select>
+
+    <select id="findAddress" resultMap="addressResultMap">
+        select * from address_info a left join user_info u on a.user_id=u.user_id
+        <where>
+            <if test="addressId!=0">address_id=#{addressId}</if>
+            <if test="userInfo!=null">and user_id=#{userInfo.userId}</if>
+        </where>
+    </select>
+
+    <insert id="addAddress">
+        insert into address_info values (null,#{addressName},#{userInfo.userId},#{addressState})
+    </insert>
+
+    <delete id="deleteAddress">
+        delete from address_info where address_id=#{addressId}
+    </delete>
+
+    <update id="updateAddress">
+        update address_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="addressName!=null">address_name=#{addressName},</if>
+            <if test="userInfo!=null">user_id=#{userInfo.userId},</if>
+            <if test="addressState!=null">address_state=#{addressState}</if>
+        </trim>
+        where address_id=#{addressId}
+    </update>
+</mapper>

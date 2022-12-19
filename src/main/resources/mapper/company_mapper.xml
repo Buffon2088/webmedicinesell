@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.CompanyDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="companyResultMap" type="webmedicinesell.pojo.CompanyInfo">
+        <id column="company_id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+        <result column="company_introduce" property="companyIntroduce"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="companyResultMap" resultType="java.util.ArrayList">
+        select * from company_info
+    </select>
+
+    <select id="findCompany" resultMap="companyResultMap">
+        select * from company_info
+        <where>
+            <if test="companyId!=0">company_id=#{companyId}</if>
+        </where>
+    </select>
+
+    <insert id="addCompany">
+        insert into company_info values (null,#{companyId},#{companyIntroduce});
+    </insert>
+
+    <delete id="deleteCompany">
+        delete from company_info where company_id=#{companyId}
+    </delete>
+
+    <update id="updateCompany">
+        update company_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="companyName!=null">company_name=#{companyName},</if>
+            <if test="companyIntroduce!=null">company_introduce=#{companyIntroduce}</if>
+        </trim>
+        where company_id=#{companyId}
+    </update>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.NewsDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="newsResultMap" type="webmedicinesell.pojo.NewsInfo">
+        <id column="news_id" property="newsId"/>
+        <result column="news_context" property="newsContext"/>
+        <result column="news_introduce" property="newsIntroduce"/>
+        <result column="news_time" property="newsTime"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="newsResultMap" resultType="java.util.ArrayList">
+        select * from news_info
+    </select>
+
+    <select id="findNews" resultMap="newsResultMap">
+        select * from news_info
+        <where>
+            <if test="newsId!=0">news_id=#{newsId}</if>
+        </where>
+    </select>
+
+    <insert id="addNews">
+        insert into news_info values (null,#{newsContext},#{newsIntroduce},#{newsTime})
+    </insert>
+
+    <delete id="deleteNews">
+        delete from news_info where news_id=#{newsId}
+    </delete>
+
+    <update id="updateNews">
+        update news_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="newsContext!=null">news_context=#{newsContext},</if>
+            <if test="newsIntroduce!=null">news_introduce=#{newsIntroduce},</if>
+            <if test="newsTime!=null">news_time=#{newsTime}</if>
+        </trim>
+        where news_id=#{newsId}
+    </update>
+</mapper>

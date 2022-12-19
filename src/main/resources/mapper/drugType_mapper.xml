@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.DrugTypeDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="drugTypeResultMap" type="webmedicinesell.pojo.DrugTypeInfo">
+        <id column="drugType_id" property="drugTypeId"/>
+        <result column="drugType_name" property="drugTypeName"/>
+        <result column="drugType_state" property="drugTypeState"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="drugTypeResultMap" resultType="java.util.ArrayList">
+        select * from drugType_info
+    </select>
+
+    <select id="findDrugType" resultMap="drugTypeResultMap">
+        select * from drugType_info
+        <where>
+            <if test="drugTypeId!=0">drugType_id=#{drugTypeId}</if>
+        </where>
+    </select>
+
+    <insert id="addDrugType">
+        insert into drugType_info values (null,#{drugTypeName},#{drugTypeState})
+    </insert>
+
+    <delete id="deleteDrugType">
+        delete from drugType_info where drugType_id=#{drugTypeId}
+    </delete>
+
+    <update id="updateDrugType">
+        update drugType_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="drugTypeName!=null">drugType_name=#{drugTypeName},</if>
+            <if test="drugTypeState!=null">drugType_state=#{drugTypeState}</if>
+        </trim>
+        where drugType_id=#{drugTypeId}
+    </update>
+</mapper>

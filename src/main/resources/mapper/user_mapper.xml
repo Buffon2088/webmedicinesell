@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.UserDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="userResultMap" type="webmedicinesell.pojo.UserInfo">
+        <id column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_loginName" property="userLoginName"/>
+        <result column="user_loginPwd" property="userLoginPwd"/>
+        <result column="user_balance" property="userBalance"/>
+        <result column="user_email" property="userEmail"/>
+        <result column="user_key" property="userKey"/>
+        <result column="user_tel" property="userTel"/>
+        <result column="user_img" property="userImg"/>
+        <result column="user_state" property="userState"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="userResultMap" resultType="java.util.ArrayList">
+        select * from user_info
+    </select>
+
+    <select id="findUser" resultMap="userResultMap">
+        select * from user_info
+        <where>
+            <if test="userId!=0">user_id=#{userId}</if>
+            <if test="userLoginName!=null">and user_loginName=#{userLoginName}</if>
+            <if test="userLoginPwd!=null">and user_loginPwd=#{userLoginPwd}</if>
+        </where>
+    </select>
+
+    <delete id="deleteUser">
+        delete from user_info where user_id=#{userId}
+    </delete>
+
+    <insert id="addUser">
+        insert into user_info values (null,#{userName},#{userLoginName},#{userLoginPwd},0,#{userEmail},#{userKey},#{userTel},#{userImg},#{userState})
+    </insert>
+
+    <update id="updateUser">
+        update usser_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userName!=null">user_name#{userName},</if>
+            <if test="userLoginName!=null">user_loginName=#{userLoginName},</if>
+            <if test="userLoginPwd!=null">user_loginPwd=#{userLoginPwd},</if>
+            <if test="userBalance!=0">user_balance=#{userBalance},</if>
+            <if test="userEmail!=null">user_email=#{userEmail},</if>
+            <if test="userKey!=null">user_key=#{userKey},</if>
+            <if test="userTel!=null">user_tel=#{userTel},</if>
+            <if test="userImg!=null">user_img=#{userImg},</if>
+            <if test="userState!=null">user_state=#{userState}</if>
+        </trim>
+        where user_id=#{userId}
+    </update>
+</mapper>

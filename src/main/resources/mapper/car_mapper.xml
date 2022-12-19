@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="webmedicinesell.dao.CarDao">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="carResultMap" type="webmedicinesell.pojo.CarInfo">
+        <id column="car_id" property="carId"/>
+        <result column="total_num" property="totalNum"/>
+
+        <association column="drug_id" property="drugInfo" jdbcType="INTEGER"
+                     javaType="webmedicinesell.pojo.DrugInfo">
+            <id column="drug_id" property="drugId" />
+            <result column="drug_name" property="drugName"/>
+            <result column="drug_introduce" property="drugIntroduce"/>
+            <result column="drug_num" property="drugNum"/>
+            <result column="drug_price" property="drugPrice"/>
+            <result column="drug_state" property="drugState"/>
+            <association column="company_id" property="companyInfo" jdbcType="INTEGER"
+                         javaType="webmedicinesell.pojo.CompanyInfo">
+                <id column="company_id" property="companyId"/>
+                <result column="company_name" property="companyName"/>
+                <result column="company_introduce" property="companyIntroduce"/>
+            </association>
+
+            <association column="drugType_id" property="drugTypeInfo" jdbcType="INTEGER"
+                         javaType="webmedicinesell.pojo.DrugTypeInfo">
+                <id column="drugType_id" property="drugTypeId"/>
+                <result column="drugType_name" property="drugTypeName"/>
+                <result column="drugType_state" property="drugTypeState"/>
+            </association>
+        </association>
+
+        <association column="user_id" property="userId" jdbcType="INTEGER"
+                     javaType="webmedicinesell.pojo.UserInfo">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="user_loginName" property="userLoginName"/>
+            <result column="user_loginPwd" property="userLoginPwd"/>
+            <result column="user_balance" property="userBalance"/>
+            <result column="user_email" property="userEmail"/>
+            <result column="user_key" property="userKey"/>
+            <result column="user_tel" property="userTel"/>
+            <result column="user_img" property="userImg"/>
+            <result column="user_state" property="userState"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="carResultMap" resultType="java.util.ArrayList">
+        select * from car_info ci
+                          left join drug_info di on ci.drug_id=di.drug_id
+                          left join user_info ui on ci.user_id=ui.user_id
+    </select>
+
+    <select id="findCar" resultMap="carResultMap">
+        select * from car_info ci
+                          left join drug_info di on ci.drug_id=di.drug_id
+                          left join user_info ui on ci.user_id=ui.user_id
+        <where>
+            <if test="carId!=0">car_id=#{carId}</if>
+            <if test="userInfo!=null">and user_id=#{userInfo.userId}</if>
+        </where>
+    </select>
+
+    <insert id="addCar">
+        insert into car_info values (null,#{totalNum},#{drugInfo.drugId},#{userInfo.userId})
+    </insert>
+
+    <delete id="deleteCar">
+        delete from car_info where car_id=#{carId}
+    </delete>
+
+    <update id="updateCar">
+        update car_info
+        <trim prefix="set" suffixOverrides=",">
+
+        </trim>
+        where car_id=#{carId}
+    </update>
+</mapper>
